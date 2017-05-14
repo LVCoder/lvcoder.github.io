@@ -1,0 +1,62 @@
+HTML { font-size: 100%; /* IE hack */ }
+BODY {margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; direction: rtl; background-color: #f2f2f2; font-family: 'typograph', arial; color: #313131;}
+IMG {border: 0px;}
+.centeredContent{max-width: 640px; width: 100%; margin: 0px auto; padding: 40px;}
+.clear {display: block; overflow: hidden; clear: both; float:none !important; font-size: 1px; line-height: 1px !important; height: 0px !important; margin: 0px !important; padding: 0px !important;}
+a{text-decoration: none; color: #313131;}
+a:hover{text-decoration: underline;}
+*{box-sizing: border-box;}
+/* -------- -------- -------- -------- -------- -------- -------- -------- -------- -------- */
+
+.botFrame{background-color: #a6dae8; border-radius: 5px; padding: 22px 5.4% 32px;}
+.botImage{padding: 0px 0px 0px 0px;}
+.botImage img{margin: 0px auto; display: block; max-width: 165px; width: 33%;}
+
+.botTitle{font: bold 30px/30px "typograph",arial; padding: 26px 0px 0px 0px;}
+.botNote{font: normal 24px/24px "typograph",arial; padding: 10px 0px 0px 0px;}
+
+ul.botForm{padding: 12px 0px 0px 0px; margin: 0px; list-style: none;}
+ul.botForm li{padding: 15px 0px 0px 0px; margin: 0px;}
+ul.botForm li input{width: 100%; height: 56px; border-radius: 5px; background-color: white; padding: 0px; margin: 0px; border: 0px; text-indent: 12px; font: normal 24px "typograph",arial; color: #313131;}
+ul.botForm li input::-webkit-input-placeholder{color: #000000 !important; opacity: 1;}
+ul.botForm li input:-moz-placeholder{color: #3d3d3d !important; opacity: 1;}
+ul.botForm li input::-moz-placeholder{color: #3d3d3d !important; opacity: 1;}
+ul.botForm li input:-ms-input-placeholder{color: #3d3d3d !important; opacity: 1;}
+
+.botSubmit{padding-top: 36px;}
+.botSubmit input{width: 100%; height: 56px; border-radius: 5px; cursor: pointer; background-color: #d21c23; padding: 0px; margin: 0px; border: 0px; font: bold 30px "typograph",arial; color: #ffffff;}
+
+@media screen and (max-width: 600px){
+	.centeredContent{padding: 25px;}
+	.botTitle{font: bold 24px/24px "typograph",arial; padding: 26px 0px 0px 0px;}
+	.botNote{font: normal 21px/21px "typograph",arial; padding: 10px 0px 0px 0px;}
+	
+	ul.botForm li input{font: normal 21px "typograph",arial;}
+	.botSubmit input{font: bold 24px "typograph",arial;}
+}
+
+@media screen and (max-width: 480px){
+	.botImage img{width: 25%;}
+	.botTitle{padding: 18px 0px 0px 0px;}
+	ul.botForm{padding: 10px 0px 0px 0px;}
+	ul.botForm li{padding: 10px 0px 0px 0px;}
+	ul.botForm li input{height: 48px;}
+	.botSubmit{padding-top: 24px;}
+	.botSubmit input{height: 48px;}
+}
+
+@media screen and (max-width: 414px){
+	.botImage img{width: 23%;}
+	.centeredContent{padding: 15px;}
+	.botFrame{padding: 20px 5.4% 24px;}
+}
+
+@media screen and (max-width: 375px){
+	.botTitle{font: bold 20px/20px "typograph",arial; padding: 12px 0px 0px 0px;}
+	.botNote{font: normal 18px/18px "typograph",arial; padding: 6px 0px 0px 0px;}
+	ul.botForm{padding: 6px 0px 0px 0px;}
+	
+	ul.botForm li input{font: normal 18px "typograph",arial;}
+	.botSubmit{padding-top: 18px;}
+	.botSubmit input{font: bold 20px "typograph",arial;}
+}
