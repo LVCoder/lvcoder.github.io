@@ -1,0 +1,53 @@
+.td-page-content .td_quote_box, .td-post-content .td_quote_box, .wpb_text_column .td_quote_box, .td_block_text_with_title .td_quote_box, .bbpress .td_quote_box, .woocommerce #tab-description .td_quote_box, .mce-content-body .td_quote_box, .comment-content .td_quote_box {
+    background-color: #f7f5f5;
+    border-left: 4px solid #4db2ec;
+    padding: 20px 23px;
+}
+
+#boatloan .wpcf7-text, #jetskiloan .wpcf7-text, #businessloan .wpcf7-text, #otherassets .wpcf7-text ,#carloan .wpcf7-text, #motorbike .wpcf7-text, #truckloan .wpcf7-text, #trailerloan .wpcf7-text, #machineryloan .wpcf7-text, #Consignmentloan .wpcf7-text, #Driveawayloan .wpcf7-text , #caravanloans .wpcf7-text{
+      width: 100%;
+    border: 1px solid #d5d8df;
+    font: 14px/14px "robotoregular";
+    color: #9098b8;
+    padding: 15px;
+    border-radius: 3px;
+    background: #f7f7fa;
+    min-height: 53px;
+}
+
+html{
+ margin-top: -1px !important; 
+}
+.scrollup
+{
+left:10px;
+ right:auto;
+}
+.menu-inner .sub-menua li ul.sub-menua {
+    float: left !important;
+    position: absolute;
+    width: 230px;
+    background: #303a50;
+    z-index: 99999;left:230px;
+    transform: translateY(15%);
+    transition: all .4s ease-in-out 0s,visibility 0s linear .4s;
+    visibility: hidden;
+    opacity: 0;top:0px;
+}
+
+
+.menu-inner ul li:hover .sub-menua li:hover .sub-menua{
+    opacity: 1 !important;
+    transform: translateX(0%);
+    transition-delay: 0s;
+    visibility: visible;
+}
+.menu-inner ul li:hover .sub-menua li:hover .sub-menua li a{
+    color: #dd2f22 !important;
+}
+.menu-inner .sub-menua li > ul.sub-menua li a {
+ color:#ffffff !important; 
+}
+.cus_arrow{
+ margin-right:15px;margin-top:15px; 
+}

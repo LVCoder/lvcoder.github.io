@@ -1,0 +1,401 @@
+div.wpcf7-validation-errors {
+    border: none !important;
+}
+span.wpcf7-not-valid-tip {
+    display: none !important;
+}
+#wpcf7-f96-o1 .wpcf7-form-control.wpcf7-text.wpcf7-validates-as-required.wpcf7-not-valid {
+    border: 1px solid #dd2d20 !important;
+}
+#wpcf7-f96-o1 div.wpcf7-mail-sent-ok {
+    border: 2px solid #fff;
+    color: #fff;
+}
+#wpcf7-f101-p67-o1 .wpcf7-form-control.wpcf7-text.wpcf7-validates-as-required.wpcf7-not-valid {
+    border: 1px solid #dd2d20 !important;
+}
+.single-loans .wpcf7-not-valid {
+    border: 1px solid #dd2d20 !important;
+}
+.single-loans .wpcf7-form-control.wpcf7-text.wpcf7-validates-as-required.wpcf7-not-valid,
+.wpcf7-form-control.wpcf7-select.wpcf7-validates-as-required.wpcf7-not-valid {
+    border: 1px solid #dd2d20 !important;
+}
+.page-id-231 .wpcf7-form-control.wpcf7-text.wpcf7-validates-as-required.wpcf7-not-valid,
+.wpcf7-form-control.wpcf7-select.wpcf7-validates-as-required.wpcf7-not-valid {
+    border: 1px solid #dd2d20 !important;
+}
+.page-id-231 .wpcf7-form-control.wpcf7-text.wpcf7-validates-as-required.wpcf7-not-valid {
+    border: 1px solid #dd2d20 !important;
+}
+.car_icon {
+    float: none;
+    margin: 0px 12px 0px 12px;
+    vertical-align: baseline;
+}
+@media only screen and (max-width:470px) {
+    .car_icon {
+        float: none;
+        vertical-align: baseline;
+        display: block;
+        margin: 0px 20px 0px auto;
+    }
+}
+@media screen and (max-width: 480px) {
+    .blog-detail-top .detail-inner h2 {
+        font: 18px/30px roboto_slabregular !important;
+    }
+}
+/*--------------------------------------------------------------
+3.0 Alignments
+--------------------------------------------------------------*/
+
+.alignleft {
+    display: inline;
+    float: left;
+    margin-right: 1.5em;
+}
+.alignright {
+    display: inline;
+    float: right;
+    margin-left: 1.5em;
+}
+.aligncenter {
+    clear: both;
+    display: block !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+.res-imgsr {
+    max-width: 100% !important;
+}
+blockquote {
+    border-left: 5px solid #ccc !important;
+    background-color: #f0f0ee !important;
+}
+blockquote > p {
+    margin-top: 0px !important;
+}
+.blog-detail-top .detail-inner a {
+    color: #dd2f22 !important;
+}
+.videoWrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+}
+.videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+/**
+ * New Homepage Update
+ */
+
+*.Pawnbroker .col-lg-6 {
+    line-height: 2;
+}
+.asset-new > h2:after {
+    content: none;
+}
+.asset-new > h2 + p {
+    margin: 2em 0;
+}
+.asset-new > h2 + p:after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 1px;
+    border-bottom: 1px solid #dd2d20;
+    left: 0;
+    padding-top: 30px;
+    margin-bottom: 30px;
+}
+.asset-new .ovel {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+.asset-new .ovel h5,
+.asset-new .ovel h5 span {
+    line-height: 1!important;
+}
+.asset-new .left {
+    position: relative;
+}
+.asset-new .inner > ul > li {
+    display: flex;
+    flex-flow: row;
+    margin-bottom: 20px;
+}
+.asset-new .left,
+.asset-new .right {
+    width: 50%;
+    padding: 0 1em;
+}
+.asset-new .left img {
+    display: block;
+    margin: auto;
+}
+.asset-new .right {
+    line-height: 2;
+}
+.asset-new .inner h3 {
+    font-weight: 700;
+    line-height: 2;
+}
+.Pawnbroker .content {
+    padding: 0 30px;
+}
+/**
+ * Loan and Other Loans section style
+ */
+
+.single-loan {
+    padding: 30px;
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid #f2f3f7;
+    line-height: 1.8;
+}
+.loans-container .single-loan {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-flow: row wrap;
+    -ms-flex-flow: row wrap;
+    flex-flow: row wrap;
+}
+.single-loan > figure,
+.single-loan > div,
+.single-loan > a {
+    width: 100%
+}
+.single-loan > a {
+    -webkit-align-self: end;
+    -ms-flex-item-align: end;
+    -ms-grid-row-align: end;
+    align-self: end;
+}
+.single-loan figure img {
+    margin-bottom: 20px;
+}
+.single-loan figcaption {
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 0.25px;
+}
+.single-loan .loan-description {
+    margin: 20px 0;
+}
+.loan-anchor {
+    text-transform: uppercase;
+    color: #eb1c2d;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+.loan-anchor:hover {
+    color: #eb1c2d;
+}
+.loan.details .header > h2:only-child:after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 1px;
+    border-bottom: 1px solid #dd2d20;
+    margin: 0 auto;
+    padding-top: 15px;
+}
+@media screen and (min-width: 500px) {
+    .loans-container {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -webkit-flex-flow: row wrap;
+        -ms-flex-flow: row wrap;
+        flex-flow: row wrap;
+    }
+    .loans-container .single-loan {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        width: 50%;
+        max-width: 50%;
+    }
+}
+@media screen and (min-width: 768px) {
+    .loans-container .single-loan {
+        width: 33.33%;
+        max-width: 33.33%;
+    }
+}
+@media screen and (min-width: 980px) {
+    .loans-container .single-loan {
+        width: 25%;
+        max-width: 25%;
+    }
+}
+/**
+ * Blog Posts (aka Latest Updates) Section
+ */
+
+.latest-updates-block-main figure img {
+    max-width: 100%;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.latest-updates-block-main .single-blog-post {
+    background-color: #fff;
+    border-radius: 5px;
+    margin: 20px 0;
+}
+.latest-updates-block-main .title {
+    padding: 20px;
+    line-height: 1.8;
+}
+@media screen and (min-width: 500px) {
+    .latest-updates-block-main {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -webkit-flex-flow: row wrap;
+        -ms-flex-flow: row wrap;
+        flex-flow: row wrap;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+    }
+    .latest-updates-block-main .single-blog-post {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        width: 48%;
+        max-width: 48%;
+        margin: 20px 1%;
+    }
+}
+@media screen and (min-width: 768px) {
+    .latest-updates-block-main .single-blog-post {
+        width: 32%;
+        max-width: 32%;
+        margin: 0 0.66%;
+    }
+}
+/**
+ * Crypto Currency Section
+ */
+
+.crypto-block-main {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: space-evenly;
+    -webkit-justify-content: space-evenly;
+    -ms-flex-pack: space-evenly;
+    justify-content: space-evenly;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    width: 100%;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 20px;
+}
+.crypto-block-main .wrapper {
+    margin: 10px 5px;
+    width: 60px;
+}
+.crypto-block-main img {
+    max-width: 100%;
+}
+.home-crypto .crpyto {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-flow: column;
+    -ms-flex-flow: column;
+    flex-flow: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.home-crypto .crpyto h2 {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    font: 30px/50px roboto_slablight;
+    text-align: center;
+}
+@media screen and (min-width: 768px) {
+    .home-crypto {
+        background-color: #003a78;
+        color: #fff;
+        padding: 50px;
+    }
+}
+@media screen and (min-width: 980px) {
+    .home-crypto .crpyto {
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -webkit-flex-flow: row;
+        -ms-flex-flow: row;
+        flex-flow: row;
+    }
+    .home-crypto .crpyto h2 {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 0 auto;
+        -ms-flex: 1 0 auto;
+        flex: 1 0 auto;
+        width: 60%;
+        max-width: 60%;
+        text-align: left;
+    }
+    .crypto-block-main {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 0 auto;
+        -ms-flex: 1 0 auto;
+        flex: 1 0 auto;
+        width: 40%;
+        max-width: 40%;
+        margin: 0;
+    }
+    .crypto-block-main .wrapper {
+        margin: 0;
+        width: 80px;
+    }
+}
+@media screen and (min-width: 1190px) {
+    .home-crypto .crpyto h2 {
+        font: 40px/50px roboto_slablight;
+    }
+}
+/***** Loan Dropdown *******/
