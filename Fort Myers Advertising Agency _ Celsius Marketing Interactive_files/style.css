@@ -1,0 +1,26 @@
+/*
+Theme Name: Salient Child Theme
+Theme URI: http: //mysite.com/
+Description: This is a custom child theme for Salient
+Author: My Name
+Author URI: http: //mysite.com/
+Template: salient
+Version: 0.1
+*/
+
+@import url("../salient/style.css");
+
+#mf_iframe {
+    opacity: 1 !important;
+}
+
+@media only screen and (min-width: 1px) and (max-width: 1000px) {
+
+body #header-outer[data-permanent-transparent="false"] #logo .dark-version {
+    height: 44px !important;
+    margin-top: 0 !important;
+    position: relative;
+    top: -10px;
+}
+	
+}
