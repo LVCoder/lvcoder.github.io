@@ -1,0 +1,8 @@
+(function(){
+var h="<div id=\"geolocation\" style=\"display: none;\"><span id=\"max_city\">Lviv<\/span> <span id=\"max_country\">UA<\/span> <span id=\"max_lat\">49.8407<\/span> <span id=\"max_long\">24.0305<\/span> <span id=\"max_state\">46<\/span> <span id=\"max_zip\">79049<\/span><\/div>";
+var r=document.referrer;
+var f=function(s){return s+"?"+(r?"referrer="+encodeURIComponent(r):"")};
+document.write(r?h.replace(/tracking\.omm\.crownpeak\.com\/\w+/gi,f):h);
+var v=f("");
+if(v.length>1)document.write("<sc"+"ript type='text/javasc"+"ript' src='//snippet.omm.crownpeak.com/r/a0688093-d060-484e-82e4-629df3903667"+v+"'></sc"+"ript>");
+})();
