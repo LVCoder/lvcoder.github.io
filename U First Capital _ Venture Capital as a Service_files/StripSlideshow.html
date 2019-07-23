@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!-- saved from url=(0272)https://static.parastorage.com/services/wix-bolt/1.3140.0/node_modules/wix-santa/node_modules/santa-galleries/target/StripSlideshow/StripSlideshow.html?compId=comp-jybixbzc1&currency=USD&deviceType=desktop&locale=en&siteRevision=1088&tz=America%2FLos_Angeles&viewMode=site -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style wix-style="" type="text/css">.Title{ font:normal normal normal 22px/1.41em raleway,sans-serif; } .Menu{ font:normal normal normal 14px/1.79em raleway,sans-serif; } .Page-title{ font:normal normal normal 28px/1.375em avenir-lt-w01_85-heavy1475544,sans-serif; } .Heading-XL{ font:normal normal normal 88px/1.2em avenir-lt-w01_85-heavy1475544,sans-serif; } .Heading-L{ font:normal normal normal 72px/1.25em avenir-lt-w01_85-heavy1475544,sans-serif; } .Heading-M{ font:normal normal normal 50px/1.34em avenir-lt-w01_85-heavy1475544,sans-serif; } .Heading-S{ font:normal normal normal 40px/1.35em avenir-lt-w01_85-heavy1475544,sans-serif; } .Body-L{ font:normal normal normal 20px/1.67em raleway,sans-serif; } .Body-M{ font:normal normal normal 18px/1.75em raleway,sans-serif; } .Body-S{ font:normal normal normal 15px/1.875em raleway,sans-serif; } .Body-XS{ font:normal normal normal 14px/1.79em raleway,sans-serif; } }</style>
+	
+	<title></title>
+	<!--
+	 GENERATED FILE, DO NOT EDIT
+	 StripSlideshow-v0.105.31
+	-->
+	<script type="text/javascript" src="./jquery.min(1).js"></script>
+	<script type="text/javascript" src="./lodash.min.js"></script>
+	<script type="text/javascript" src="./jquery.easing.min.js"></script>
+	<script type="text/javascript" src="./webfont.js"></script>
+	<script type="text/javascript" src="./jquery.cycle2.min.js"></script>
+	<script type="text/javascript" src="./jquery.cycle2.scrollVert.min.js"></script>
+	<script type="text/javascript" src="./utils.js"></script>
+	<script type="text/javascript" src="./app.proto.js"></script>
+
+	<script type="text/javascript" src="./wix.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="./style.min.css">
+	<script type="text/javascript" src="./app.min.js"></script>
+
+<script type="text/javascript">// Promises 
+var _eid_promises = {}; 
+// Turn the incoming message from extension 
+// into pending Promise resolving 
+window.addEventListener("message", function(event) { 
+    if(event.source !== window) return; 
+    if(event.data.src && (event.data.src === "background.js")) { 
+        console.log("Page received: "); 
+        console.log(event.data); 
+        // Get the promise 
+        if(event.data.nonce) { 
+            var p = _eid_promises[event.data.nonce]; 
+            // resolve 
+            if(event.data.result === "ok") { 
+                if(event.data.signature !== undefined) { 
+                    p.resolve({hex: event.data.signature}); 
+                } else if(event.data.version !== undefined) { 
+                    p.resolve(event.data.extension + "/" + event.data.version); 
+                } else if(event.data.cert !== undefined) { 
+                    p.resolve({hex: event.data.cert}); 
+                } else { 
+                    console.log("No idea how to handle message"); 
+                    console.log(event.data); 
+                } 
+            } else { 
+                // reject 
+                p.reject(new Error(event.data.result)); 
+            } 
+            delete _eid_promises[event.data.nonce]; 
+        } else { 
+            console.log("No nonce in event msg"); 
+        } 
+    } 
+}, false); 
+ 
+ 
+function TokenSigning() { 
+    function nonce() { 
+        var val = ""; 
+        var hex = "abcdefghijklmnopqrstuvwxyz0123456789"; 
+        for(var i = 0; i < 16; i++) val += hex.charAt(Math.floor(Math.random() * hex.length)); 
+        return val; 
+    } 
+ 
+    function messagePromise(msg) { 
+        return new Promise(function(resolve, reject) { 
+            // amend with necessary metadata 
+            msg["nonce"] = nonce(); 
+            msg["src"] = "page.js"; 
+            // send message 
+            window.postMessage(msg, "*"); 
+            // and store promise callbacks 
+            _eid_promises[msg.nonce] = { 
+                resolve: resolve, 
+                reject: reject 
+            }; 
+        }); 
+    } 
+    this.getCertificate = function(options) { 
+        var msg = {type: "CERT", lang: options.lang, filter: options.filter}; 
+        console.log("getCertificate()"); 
+        return messagePromise(msg); 
+    }; 
+    this.sign = function(cert, hash, options) { 
+        var msg = {type: "SIGN", cert: cert.hex, hash: hash.hex, hashtype: hash.type, lang: options.lang, info: options.info}; 
+        console.log("sign()"); 
+        return messagePromise(msg); 
+    }; 
+    this.getVersion = function() { 
+        console.log("getVersion()"); 
+        return messagePromise({ 
+            type: "VERSION" 
+        }); 
+    }; 
+}</script><link type="text/css" rel="stylesheet" href="./languages-woff2.css"><link type="text/css" rel="stylesheet" href="./css" id="wix-google-fonts"></head>
+<body style="">
+<div id="wrapper">
+	<div id="viewport" class="grid image-animation" data-mode="site" style="text-align: left; position: relative; overflow: hidden;"><div class="item cycle-slide cycle-sentinel" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: static; top: 0px; left: 0px; z-index: 100; opacity: 1; visibility: hidden; display: block;"><div class="inner" style="visibility: hidden;"><div style="visibility: hidden;"><div class="img" data-uri="3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg" data-width="1017" data-height="630" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg/v1/fill/w_1017,h_630,al_c,q_85,usm_0.66_1.00_0.01/3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg&quot;) 50% center / cover no-repeat; visibility: hidden;"></div><div class="overlay" style="height: 630px; left: 230px; visibility: hidden;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left; top: 182px; visibility: hidden;"><div style="visibility: hidden;"><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none; visibility: hidden;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="item cycle-slide cycle-sentinel" style="position: static; visibility: hidden; display: block;"><div class="inner" style="visibility: hidden;"><div style="visibility: hidden;"><div class="img" data-uri="3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg" data-width="1017" data-height="630" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg/v1/fill/w_1017,h_630,al_c,q_85,usm_0.66_1.00_0.01/3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg&quot;) 50% center / cover no-repeat; visibility: hidden;"></div><div class="overlay" style="height: 630px; left: 230px; visibility: hidden;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left; top: 182px; visibility: hidden;"><div style="visibility: hidden;"><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none; visibility: hidden;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="grid-sizer" style="width: 1440px;"></div><div class="cycle-pager"><span class="">•</span><span class="">•</span><span class="cycle-pager-active">•</span><span>•</span><span>•</span><span>•</span><span>•</span><span>•</span></div><div class="item cycle-slide" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: absolute; top: 0px; left: 0px; z-index: 92; opacity: 1; display: none;"><div class="inner"><div><div class="img" data-uri="3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg" data-width="1017" data-height="630" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg/v1/fill/w_1017,h_630,al_c,q_85,usm_0.66_1.00_0.01/3c1285_eb12bb2f33d045bc9aa99279ddaa1b2e~mv2.jpg&quot;) 50% center / cover no-repeat;"></div><div class="overlay" style="height: 630px; left: 230px;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left; top: 560px;"><div><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="item cycle-slide" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: absolute; top: 0px; left: 0px; z-index: 96; display: none; opacity: 1;"><div class="inner"><div><div class="img" data-uri="3c1285_66c65fd34f894c5ea5f7c4257453b5f9~mv2_d_4800_2400_s_4_2.jpg" data-width="4800" data-height="2400" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/3c1285_66c65fd34f894c5ea5f7c4257453b5f9~mv2_d_4800_2400_s_4_2.jpg/v1/fill/w_2880,h_1440,al_c,q_90,usm_0.66_1.00_0.01/3c1285_66c65fd34f894c5ea5f7c4257453b5f9~mv2_d_4800_2400_s_4_2.jpg&quot;) 50% center / cover no-repeat;"></div><div class="overlay" style="height: 720px; left: 230px;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left; top: 560px;"><div><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="item cycle-slide cycle-slide-active" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: absolute; top: 0px; left: 0px; z-index: 99; display: block; opacity: 1;"><div class="inner"><div><div class="img" data-uri="3c1285_4fa2612bc47f40578eceba7645d5f98b~mv2.jpg" data-width="1280" data-height="670" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/3c1285_4fa2612bc47f40578eceba7645d5f98b~mv2.jpg/v1/fill/w_1280,h_670,al_c,q_85,usm_0.66_1.00_0.01/3c1285_4fa2612bc47f40578eceba7645d5f98b~mv2.jpg&quot;) 50% center / cover no-repeat;"></div><div class="overlay" style="height: 670px; left: 230px;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left; top: 182px;"><div><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="item cycle-slide" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: absolute; top: 0px; left: 0px; z-index: 97; display: none;"><div class="inner"><div><div class="img" data-uri="3c1285_783b0cff755348ccb51893f4096115e3~mv2.jpg" data-width="987" data-height="754" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/3c1285_783b0cff755348ccb51893f4096115e3~mv2.jpg/v1/fill/w_987,h_754,al_c,q_85,usm_0.66_1.00_0.01/3c1285_783b0cff755348ccb51893f4096115e3~mv2.jpg&quot;) 50% center / cover no-repeat;"></div><div class="overlay" style="height: 754px; left: 230px;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left;"><div><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="item cycle-slide" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: absolute; top: 0px; left: 0px; z-index: 96; display: none;"><div class="inner"><div><div class="img" data-uri="3c1285_8094556c0a5f4f92aecdb894fea81637~mv2.jpg" data-width="758" data-height="429" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/3c1285_8094556c0a5f4f92aecdb894fea81637~mv2.jpg/v1/fill/w_758,h_429,al_c,q_80,usm_0.66_1.00_0.01/3c1285_8094556c0a5f4f92aecdb894fea81637~mv2.jpg&quot;) 50% center / cover no-repeat;"></div><div class="overlay" style="height: 429px; left: 230px;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left;"><div><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="item cycle-slide" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: absolute; top: 0px; left: 0px; z-index: 95; display: none;"><div class="inner"><div><div class="img" data-uri="d5838190cba0447aa103713c99db4229.jpg" data-width="4905" data-height="3270" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/d5838190cba0447aa103713c99db4229.jpg/v1/fill/w_2880,h_1920,al_c,q_90,usm_0.66_1.00_0.01/d5838190cba0447aa103713c99db4229.jpg&quot;) 50% center / cover no-repeat;"></div><div class="overlay" style="height: 960px; left: 230px;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left;"><div><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="item cycle-slide" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: absolute; top: 0px; left: 0px; z-index: 94; display: none;"><div class="inner"><div><div class="img" data-uri="3c1285_019f38eb57f14f60b3cdab802a7ee8c2~mv2.jpg" data-width="1600" data-height="900" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/3c1285_019f38eb57f14f60b3cdab802a7ee8c2~mv2.jpg/v1/fill/w_1440,h_810,al_c,q_85,usm_0.66_1.00_0.01/3c1285_019f38eb57f14f60b3cdab802a7ee8c2~mv2.jpg&quot;) 50% center / cover no-repeat;"></div><div class="overlay" style="height: 810px; left: 230px;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left;"><div><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div><div class="item cycle-slide" style="width: 1440px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; height: 560px; position: absolute; top: 0px; left: 0px; z-index: 93; display: none;"><div class="inner"><div><div class="img" data-uri="12316e44d26649c69a935420b4dbb784.jpg" data-width="1920" data-height="1440" style="height: 560px; width: 1440px; background: url(&quot;https://static.wixstatic.com/media/12316e44d26649c69a935420b4dbb784.jpg/v1/fill/w_1440,h_1080,al_c,q_85,usm_0.66_1.00_0.01/12316e44d26649c69a935420b4dbb784.jpg&quot;) 50% center / cover no-repeat;"></div><div class="overlay" style="height: 1080px; left: 230px;"><div class="sb-description text-animation" style="left: 20px; right: auto; float: left;"><div><div class="more" style="float: left; clear: left; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); cursor: pointer; display: none;">Read more&nbsp;&nbsp;&nbsp;&nbsp;&gt;</div></div></div></div></div></div></div></div>
+</div>
+<script type="text/javascript">
+	(function(SCOPE){
+		var viewport = $('#viewport');
+		var App = new StripGalleryController(viewport, {});
+	}(window));
+</script>
+
+<style></style></body></html>
