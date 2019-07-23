@@ -1,0 +1,1589 @@
+function setResponsive() {
+    if (!document.querySelectorAll('meta[name="viewport"]').length) {
+        var meta = document.createElement('meta');
+        meta.name = "viewport";
+        meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+        document.getElementsByTagName('head')[0].appendChild(meta);
+    }
+}
+
+function linkify(text) {
+    var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(urlRegex, function (url) {
+        return '<a class="link" href="' + url + '" target="_blank">' + url + '</a>';
+    });
+}
+
+function linkifyWithText(text) {
+    var insertLinkReplaceRegex = /{(?:"link":")(.*?)(?:"),(?:"text":")(.*?)(?:"),(?:"messengerExtensions":)(.*?)(?:)}/ig;
+
+    return text.replace(insertLinkReplaceRegex, function (result) {
+        let newResult = JSON.parse(text.match(result));
+        return '<a class="inserted_link" href="' + newResult.link + '" target="_blank">' + newResult.text + '</a>';
+    });
+}
+
+function getLinkifyParsedText(text){
+    var insertLinkReplaceRegex = /{(?:"link":")(.*?)(?:"),(?:"text":")(.*?)(?:"),(?:"messengerExtensions":)(.*?)(?:)}/ig;
+    return JSON.parse(text.match(insertLinkReplaceRegex));
+}
+
+//Loading stylesheets and scripts functions
+function loadStylesheet(url) {
+    var head = document.getElementsByTagName('head')[0];
+    var stylesheet = document.createElement('link');
+
+    stylesheet.type = 'text/css';
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = url;
+    head.appendChild(stylesheet);
+}
+
+function loadScript(scriptLocationAndName) {
+    var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('script');
+
+    script.type = 'text/javascript';
+    script.src = scriptLocationAndName;
+    head.appendChild(script);
+}
+
+function loadScriptCallback(url, callback) {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+
+    if (script.readyState) { //IE
+        script.onreadystatechange = function () {
+            if (script.readyState == "loaded" || script.readyState == "complete") {
+                script.onreadystatechange = null;
+                callback();
+            }
+        };
+    } else { //Others
+        script.onload = function () {
+            callback();
+        };
+    }
+
+    script.src = url;
+    document.getElementsByTagName("head")[0].appendChild(script);
+}
+
+
+var rootUrl = "https://app.botscrew.com/api" + "/";
+var getStartedUrl = rootUrl + "sockwidget/getStarted";         //to get a FB userId. FB returns userId - IMPORTANT!
+
+var botImageUrl = "https://app.botscrew.com/api/images/widget/default_avatar.png";
+var widgetImageUrl = rootUrl + "images/widget/widget-icon.svg";
+var chevronIconUrl = rootUrl + "images/widget/chevron-right.svg";
+var sendMsgIconUrl = rootUrl + "images/widget/navigation.svg";
+var leftArrowIconUrl = rootUrl + "images/widget/arrow-left.svg";
+var waveIconUrl = rootUrl + "images/widget/wave.svg";
+var circleIcon = rootUrl + "images/widget/x-circle.svg";
+var chatHistoryUrl = rootUrl + "widget" + "/" + "chat" + "/";
+
+var title = "Hey there";
+
+var widgetTitle = "Hey there!";
+var greetingText = "Ready to start a journey with our chatbot?";
+
+var popupText = "Hey there! Do you have any HR question?";
+var inputName = true;
+var inputEmail = false;
+var popupDelay = '1';
+var botName = "HR Chatbot ";
+var botId = "245";                         // botPageId is used as id of the recipient
+var socketUrl = rootUrl + "sockwidget";
+var stompClientSubscribeUrl = "/topic/greetings/";
+var stompClientSendUrl = "/app/widget";
+var loggedIn = false;
+var color = "#1dc8a6";
+var isDisplayChatHistory = "false";
+var isInputDisabled = "false";
+
+//Â© All rights reserved. BotsCrew 2018
+
+(function () {
+    setResponsive();
+
+    //Loading necessary stylesheets
+    loadStylesheet(rootUrl + 'css/widget.css');
+    loadStylesheet('https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css');
+
+    //Loading necessary socket script files
+    loadScript("https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.0/sockjs.min.js");
+    loadScript("https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js");
+
+    //Checking if jQuery library is loaded or loading it and initializing widget
+    setTimeout(function () {
+        (window.jQuery && init()) || loadScriptCallback("https://code.jquery.com/jquery-1.12.4.min.js", init);
+    }, 1000);
+
+    var inputDisabled = isInputDisabled === "true" ? true : false;
+
+    //Script build function
+    function init() {
+        var $ = window.jQuery;
+
+        var anchor = $('<div>')
+            .attr('id', 'bc__widget-container')
+            .appendTo($('body'));
+
+        var chatbot = $('<div>')
+            .addClass('chatbot')
+            .appendTo(anchor);
+
+
+        var launcher = $('<div>')
+            .addClass('bc__widget-launcher')
+            .addClass('bc__widget--effect')
+            .css('background', color)
+            .append(
+                $('<img/>').addClass('bc__widget--icon').attr('src', widgetImageUrl)
+            )
+            .appendTo(anchor);
+
+        function openChat() {
+            if(isDisplayChatHistory === "true"){
+                sessionStorage.setItem("isOpen", true)
+            }
+
+            popup.css({ 'opacity': '0' });
+            popupDelay = -1;
+
+            var data = {
+                botId: botId,
+                name: 'Widget user'
+            };
+
+            if(isDisplayChatHistory === "true"){
+                chatId = localStorage.getItem("chatId");
+            }
+
+
+            if (chatId === null || chatId === "null") {
+                getStarted(data);
+            } else {
+                if(isDisplayChatHistory === "true"){
+                    loggedIn = true;
+                    fetchChatHistoryAndDisplayIt();
+                }
+            }
+            launcherEvent();
+        }
+
+        var connected = false;
+        var chatId = null;
+        var socketsConnectionInterval;
+
+        launcher.click(function () {
+            if(isDisplayChatHistory === "true"){
+                if(sessionStorage.getItem("isOpen") == "false" || sessionStorage.getItem("isOpen") == undefined){
+                    openChat();
+                    if(chatId !== null) {
+                        if (!connected) {
+                            socketsConnectionInterval = setInterval(function () {
+                                if (connected) {
+                                    clearInterval(socketsConnectionInterval);
+                                    sendName("Welcome back", "btn", "");
+                                }
+                            }, 500);
+
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                openChat()
+            }
+        });
+
+        var popup = $('<div>');
+        popup
+            .addClass('bc__popup-message')
+            .append($('<img/>').addClass('bc__widget--icon').attr('src', circleIcon).attr('id', 'close_popup'))
+            .append($('<p id="open_start-window">').append(popupText))
+            .appendTo(anchor)
+        setTimeout(function () {
+            popupText.length > 5 && popupDelay >= 0 && popup.addClass('animated')
+        }, parseInt(popupDelay) * 1000);
+
+
+        var openWindow = $('#open_start-window');
+        openWindow.click(function () {
+            openChat();
+        });
+
+
+        var close_popup = $('#close_popup');
+
+        close_popup.click(function (e) {
+            popup.css({ 'opacity': '0' });
+        });
+
+
+        var botLogo = $('<img alt="bot icon"/>').attr('src', botImageUrl);
+
+        var $w = $(window);
+
+        var launcherCont = {};
+
+        var chatTop = 540,
+            chatBottom = 60;
+
+        if(isDisplayChatHistory === "true") {
+            var popupChatId = localStorage.getItem("chatId");
+            if (popupChatId !== null) {
+                popup.css({'opacity': '0'});
+                popupDelay = -1;
+            }
+        }
+
+        launcherCont.bottom = 40;
+        launcherCont.right = 40;
+        launcherCont.width = 360;
+        launcherCont.height = 20;
+
+        var chatHeight = chatTop;
+        var chatWidth = launcherCont.width;
+
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            // if ($w.width() < 500) {
+            chatHeight = chatTop = $w.height();
+            chatWidth = $w.width();
+
+            launcherCont.right = 0;
+            launcherCont.bottom = 0;
+        }
+
+        function fetchChatHistoryAndDisplayIt() {
+            var promised = requestDataWithChatId(chatId);
+
+            promised.done(function(data){
+                data.forEach(function(item){
+
+                    let tempObj = JSON.parse(JSON.stringify(item));
+                    let message = JSON.parse(item.message);
+                    let isEcho = item.isEcho;
+                    let postback = JSON.parse(item.postback);
+
+                    tempObj.isEcho = isEcho
+
+                    tempObj.message = message;
+                    tempObj.postback = postback;
+
+
+                    if(message == null) {
+                        tempObj.message = { isEcho: false, text: postback.title };
+                    }
+                    var newCopy = convertToMessagingType(tempObj, tempObj.isEcho);
+                    if(newCopy.isEcho == true) {
+                        setResponse(newCopy, setGenericWidth)
+                        if ((newCopy.message !== null) && (newCopy.message !== undefined)) {
+                            if (newCopy.message.attachment.payload.text !== undefined) {
+                                let parsedText = getLinkifyParsedText(newCopy.message.attachment.payload.text);
+                                if(parsedText != null && parsedText.messengerExtensions == true){
+                                    $(".inserted_link").click(function() {
+                                        event.preventDefault();
+                                        var href = $(this).attr('href');
+                                        openUrlWindow(href, parsedText.messengerExtensions)
+                                    })
+                                }
+                            }
+                        }
+                    } else {
+                        showChatHistoryUserMessage("btn", newCopy.message.attachment.payload.text, newCopy.message.attachment.payload.text)
+                    }
+
+                })
+            });
+        }
+
+        function openChatIfIsOpenTrue() {
+            if(isDisplayChatHistory === "true") {
+                if (sessionStorage.getItem("isOpen") == "true") {
+                    openChat();
+                }
+            }
+        }
+
+        window.loaded = openChatIfIsOpenTrue();
+
+
+        function launcherEvent() {
+            var messageContainer = $('<div id="messageContainer" class="message-container">')
+                .css('width', chatWidth)
+                .css('height', chatHeight - 68 * 2);                      //68px is message-containers top and bottom margins
+
+            var webview = $('<div class="widget-webview" id="webview">')
+                .append(
+                    $('<div class="webview-header">')
+                        .css('background', color)
+                        .append(
+                            $('<button class="back-to-bot_button">')
+                                .append(
+                                    $('<img alt="left arrow">').attr('src', leftArrowIconUrl).addClass('bc__widget--icon')
+                                )
+                                .append(
+                                    $('<span>Back to Bot</span>')
+                                )
+                                .on('click', backToBot)
+                        )
+                )
+                .append(
+                    $('<div class="webview-content">')
+                        .append(
+                            $('<iframe id="webviewFrame">')
+                        )
+                );
+            if ($('#bc__chat-window').length === 0) {
+                var startScreen = $('<div id="bc__widget__start-screen">')
+                    .css('width', chatWidth)
+                    .css('bottom', 40)
+                    .css('right', launcherCont.right)
+                    .css('display', 'none')
+                    .append(
+                        $('<div class="start-top">')
+                            .css('background', color)
+                            .append(
+                                $('<div class="close-btn">')
+                                    .on("click", startScreenHide)
+                            )
+                            .append(
+                                $('<div class="inner">')
+                                    .append(
+                                        $('<img alt="" class="bot-image">').attr('src', botImageUrl)
+                                    )
+                                    .append(
+                                        $('<div class="start-top__info">')
+                                            .append(
+                                                $('<h3 class="start-top__title">').text(widgetTitle)
+                                            )
+                                            .append(
+                                                $('<h4 class="start-top__subtitle">').text(greetingText)
+                                            )
+                                    )
+                            )
+                    );
+                if (inputName || inputEmail) {
+                    var startBottom = $('<div class="start-bottom">');
+                    startBottom.append(
+                        $('<p class="start-bottom__text">').text(`Jump into chat by entering your ${inputEmail && !inputName ? 'email' : 'name'}`)
+                    );
+                    var form = $('<form name="login-form" class="login-form">');
+                    if (inputName) {
+                        form.append(
+                            $('<input type="text" placeholder="Your name" class="email-input" />')
+                                .attr('id', 'inputName'));
+                    }
+                    if (inputEmail) {
+                        form.append(
+                            $('<input type="text" placeholder="Your email" class="email-input" />')
+                                .attr('id', 'inputEmail'));
+                    }
+                    form.append(
+                        $('<button type="submit" class="login-btn">Start</button>')
+                            .css('background', color));
+                    form.on('submit', function (e) {
+                        e.preventDefault();
+                        login();
+                    });
+                    startBottom.append(form);
+                    startScreen.append(startBottom);
+                }
+
+
+                var chatWindow = $('<div id="bc__chat-window">')
+                    .css('height', chatHeight)
+                    .css('top', -chatHeight - 16)
+                    .css('width', chatWidth)
+                    .css('right', launcherCont.right)
+                    .css('display', !inputEmail && !inputName ? 'block' : 'none')
+                    .append(messageContainer)
+                    .append(webview)
+                    .append(
+                        $('<div class="chat-top">')
+                            .css('bottom', chatHeight - chatBottom)
+                            .css('background', color)
+                            .append(
+                                $('<div class="bot-name">')
+                                    .append(
+                                        $('<img alt="bot logo">').attr('src', botImageUrl)
+                                    )
+                                    .append(
+                                        $('<span class="bot-name__text">').text(botName)
+                                    )
+                            )
+                            .append(
+                                $('<div class="close-btn">').on("click", chatWindowClose)
+                            )
+                    )
+                    .append(
+                        inputDisabled ?
+                            $('<div class="chat-bottom">')
+                                .css('display', "none")
+                                .append(
+
+                                    $('<div class="input-container">')
+                                        .append(
+                                            $('<input id="bc__widget__chat-input" type="text" placeholder="Write a reply...">')
+                                                .keypress(function (evt) {
+                                                    if (evt.which === 13) {
+                                                        evt.preventDefault();
+                                                        send();
+                                                    }
+                                                })
+                                                .on("click", function () {
+                                                    $(".persistent-menu").hide();
+                                                })
+                                        )
+                                        .append(
+                                            $('<a class="send-message">')
+                                                .append(
+                                                    $('<img alt="send icon">').attr('src', sendMsgIconUrl)
+                                                )
+                                                .on("click", send)
+                                        )
+                                ) :  $('<div class="chat-bottom">')
+                                .css('width', chatWidth)
+                                .css('height', chatBottom)
+                                .append(
+
+                                    $('<div class="input-container">')
+                                        .append(
+                                            $('<input id="bc__widget__chat-input" type="text" placeholder="Write a reply...">')
+                                                .keypress(function (evt) {
+                                                    if (evt.which === 13) {
+                                                        evt.preventDefault();
+                                                        send();
+                                                    }
+                                                })
+                                                .on("click", function () {
+                                                    $(".persistent-menu").hide();
+                                                })
+                                        )
+                                        .append(
+                                            $('<a class="send-message">')
+                                                .append(
+                                                    $('<img alt="send icon">').attr('src', sendMsgIconUrl)
+                                                )
+                                                .on("click", send)
+                                        )
+                                )
+                    )
+                    .appendTo(chatbot);
+            }
+            chatbot.append(startScreen);
+
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                if(chatWindow !== undefined && chatWindow.css !== undefined){
+                    chatWindow.css('top', -chatHeight);
+                }
+            }
+
+
+            if ((!inputName && !inputEmail)) {
+                login();
+            } else {
+                if (!loggedIn) {
+                    startScreenShow();
+                } else {
+                    chatWindowShow();
+                }
+            }
+
+
+            $.fn.isolatedScroll = function () {
+                this.bind('mousewheel DOMMouseScroll ontouchstart ontouchmove', function (e) {
+                    var delta = e.wheelDelta || (e.originalEvent && e.originalEvent.wheelDelta) || -e.detail,
+                        bottomOverflow = this.scrollTop + $(this).outerHeight() - this.scrollHeight >= 0,
+                        topOverflow = this.scrollTop <= 0;
+
+                    if ((delta < 0 && bottomOverflow) || (delta > 0 && topOverflow)) {
+                        e.preventDefault();
+                    }
+                });
+                return this;
+            };
+            messageContainer.isolatedScroll();
+
+        }
+
+        function ifStringEmpty(text) {
+            if (text == null)
+                return true;
+            text = text.trim();
+            return (text.length === 0 && !text.trim() && text.trim() !== " ");
+        }
+
+        function getStarted(data) {
+            window.jQuery.ajax({
+                type: "POST",
+                url: getStartedUrl,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
+
+                success: function (id) {
+                    chatId = id;
+                    connect();
+                },
+                error: function () {
+                    console.log("Internal Server Error. Not possible to get chat id.");
+                }
+            })
+        }
+
+        function requestDataWithChatId(chatId) {
+            return $.ajax({
+                type: "GET",
+                url: chatHistoryUrl + chatId,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: { },
+
+                success: function (data) {
+                    if(connected == false) {
+                        connect();
+                    }
+                },
+                error: function () {
+                    console.log("Internal Server Error. Not possible to fetch data")
+                }
+            })
+        }
+
+        function isEmail(email) {
+            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            return regex.test(email);
+        }
+
+        function login() {
+            if (!connected) {
+                socketsConnectionInterval = setInterval(function () {
+                    if (connected) {
+                        clearInterval(socketsConnectionInterval);
+                        login();
+                    }
+                }, 500);
+
+                return false;
+            }
+
+            var Email = $('#inputEmail');
+            var Name = $('#inputName');
+            var email = null;
+            var name = 'Widget user';
+
+            if (inputEmail) {
+                email = Email.val();
+            }
+            if (inputName) {
+                name = Name.val();
+            }
+
+            Name.css('background', 'white').css('border', '1px solid #ccc');
+            Email.css('background', 'white').css('border', '1px solid #ccc');
+            var valid = true;
+            if (inputName && ifStringEmpty(name)) {
+                Name
+                    .css("border-color", "red")
+                    .css("background-color", "rgba(255, 0, 0, 0.3)");
+                valid = false;
+            }
+            if (inputEmail && !isEmail(email)) {
+                Email
+                    .css("border-color", "red")
+                    .css("background-color", "rgba(255, 0, 0, 0.3)");
+                valid = false;
+            }
+            if (!valid) {
+                if(isDisplayChatHistory === "true"){
+                    sessionStorage.setItem("isOpen", false)
+                    localStorage.setItem("chatId", null)
+                }
+                return false;
+            }
+
+            chatWindowShow();
+
+            $($('#bc__widget__start-screen')[0]).fadeOut("fast", function () {
+                var data = {
+                    chatId: chatId,
+                    name: name,
+                    email: email,
+                    botId: botId
+                };
+
+                if (!loggedIn) {
+                    setResponse({ sender_action: 'typing_on' });
+                    $.ajax({
+                        type: "POST",
+                        url: rootUrl + "sockwidget/updateName",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "text",
+                        data: JSON.stringify(data),
+                        success: function () {
+                            sendName("Welcome message", "btn", "");
+                            loggedIn = true;
+                            if(isDisplayChatHistory === "true"){
+                                localStorage.setItem("chatId", data.chatId)
+                                sessionStorage.setItem("isOpen", true)
+                            }
+                        },
+                        error: function (err) {
+                            console.log("Internal Server Error. Not possible to create new user.", err);
+                        }
+                    });
+                }
+            })
+        }
+
+        function startScreenShow() {
+            launcher.addClass('bc__widget--hidden');
+            $('#bc__widget__start-screen').show();
+            $("#bc__widget__chat-input").val('');
+        }
+
+        function chatWindowShow() {
+            $('#bc__chat-window').show();
+            $("#bc__widget__chat-input").val('');
+
+            if (/webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // if ($w.width() < 500) {
+                $('body')
+                    .animate({
+                        scrollTop: 0
+                    }, 0)
+                    .css('overflow-y', 'hidden')
+                    .css('max-height', chatTop)
+                    .wrapInner('<div id="overflowWrapper" />');
+                $('#overflowWrapper').css('overflow-y', 'hidden').css('height', chatTop);
+            } else if (/Android/i.test(navigator.userAgent)) {
+                $('body')
+                    .scrollTop(0)
+                    .css('overflow', 'hidden')
+                    .css('height', '100vh');
+            }
+        }
+
+        function startScreenHide() {
+            if(isDisplayChatHistory === "true"){
+                sessionStorage.setItem("isOpen", false)
+            }
+            $('#bc__widget__start-screen').hide();
+            launcher.removeClass('bc__widget--hidden');
+        }
+
+        function chatWindowClose() {
+            if(isDisplayChatHistory === "true"){
+                $("#messageContainer").empty();
+                sessionStorage.setItem("isOpen", false)
+            }
+
+            startScreenHide()
+            $('#bc__chat-window').hide();
+            $('.chat-close').hide();
+
+            launcher.removeClass('bc__widget--hidden');
+
+            if (/webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // if ($w.width() < 500) {
+                $("#overflowWrapper").contents().unwrap();
+                $('body')
+                    .css('overflow-y', 'auto')
+                    .css('max-height', 'none');
+            } else if (/Android/i.test(navigator.userAgent)) {
+                $('body')
+                    .css('overflow-y', 'auto')
+                    .css('height', 'auto');
+            }
+
+            if (socketsConnectionInterval) {
+                clearInterval(socketsConnectionInterval)
+            }
+        }
+
+        var container = null;
+
+        function setResponse(val) {
+            var quickReplies = $('.scrolling-container.quick');
+
+            if (quickReplies.length > 0) {
+                quickReplies[0].remove();
+            }
+
+            var typing = $('.message-container').find($('#wave'));
+            if (typing) {
+                typing.parent().remove();
+            }
+
+            if (!container) {
+                container = $('<div class="message-outer bot">')
+                    .append(
+                        $('<div class="flex-container">')
+                            .append(
+                                $('<div class="bot-icon">')
+                                    .append(botLogo.clone())
+                            )
+                            .append($('<div class="message-wrapper">'))
+                    );
+            } else {
+                container = $(".message-outer.bot").last();
+            }
+
+            var sendBtn = $('.send-message');
+            var msgWrapper = container.find(".message-wrapper");
+            var message = $('<div class="chat-message bot">');
+            var btnWidth,
+                scrCont,
+                scrContWidth = 0;
+
+            var quickReplyIndex = 0;
+            if (val.sender_action === 'typing_on') {
+                var wave = $('<div id="wave">')
+                    .append($('<span class="dot">'))
+                    .append($('<span class="dot">'))
+                    .append($('<span class="dot">'));
+                msgWrapper.append(
+                    $('<div class="message-row">')
+                        .append(wave)
+                );
+            } else if (val.sender_action === 'typing_off') {
+                var typing = $('.message-container').find($('#wave'));
+                typing.remove();
+            }
+
+            if ((val.message !== null) && (val.message !== undefined)) {
+                if (val.message.text !== undefined) {
+                    let parsedText = getLinkifyParsedText(val.message.text);
+                    if(parsedText != null) {
+                        message.html(linkifyWithText(val.message.text))
+                    } else {
+                        message.html(linkify(val.message.text))
+                    }
+                } else if (val.message.attachment !== undefined && val.message.attachment.payload && val.message.attachment.payload.text) {
+                    let parsedText = getLinkifyParsedText(val.message.attachment.payload.text);
+                    if(parsedText != null) {
+                        message.html(linkifyWithText(val.message.attachment.payload.text))
+                    } else {
+                        message.html(linkify(val.message.attachment.payload.text))
+                    }
+                }
+                // setTimeout(function () {
+                if (message.text().length && message.text().trim()) {
+                    $('<div class="message-row">')
+                        .append(message)
+                        .appendTo(msgWrapper);
+                }
+                if (val.message.quick_replies && val.message.quick_replies.length !== 0) {
+                    scrCont = $('<div>')
+                        .addClass('scrolling-container')
+                        .addClass('quick')
+                        .append(
+                            $('<span class="bc__widget--arrow">')
+                                .attr('id', 'leftArrow')
+                                .append(
+                                    $('<img alt="chevron">').addClass('bc__widget--icon')
+                                        .attr('src', chevronIconUrl)
+                                        .css('transform', 'scaleX(-1)')
+                                )
+                                .click(
+                                    function () {
+                                        var repliesList = $('#scroll');
+                                        var rightArrow = $('#rightArrow');
+
+                                        var replies = repliesList.children();
+
+
+                                        var scrollValue = replies[quickReplyIndex].getBoundingClientRect().width + 25 //25(arrowWidth);
+
+                                        if (quickReplyIndex === 1) {
+                                            scrollValue += 32;          //32px is the first element's margin-left value
+                                        }
+
+                                        if (quickReplyIndex > 0) {
+                                            quickReplyIndex--;
+                                        }
+
+                                        repliesList
+                                            .clearQueue()
+                                            .stop()
+                                            .animate({
+                                                scrollLeft: "-=" + scrollValue
+                                            }, "fast", function () {
+
+                                                if (repliesList.scrollLeft() < rightArrow.width()) {
+                                                    $('#leftArrow').hide();
+                                                }
+                                                rightArrow.css('display', 'flex');
+                                            });
+                                    }
+                                )
+                        )
+                        .append(
+                            $('<span class="bc__widget--arrow">')
+                                .attr('id', 'rightArrow')
+                                .append(
+                                    $('<img alt="chevron">').attr('src', chevronIconUrl).addClass('bc__widget--icon')
+                                )
+                                .click(
+                                    function () {
+                                        var repliesList = $('#scroll');
+                                        var leftArrow = $('#leftArrow');
+
+                                        var replies = repliesList.children();
+
+                                        var scrollValue = replies[quickReplyIndex].getBoundingClientRect().width + 25 //25(arrowWidth);
+
+                                        if (quickReplyIndex === 0) {
+                                            scrollValue += 32;          //32px is the first element's margin-left value
+                                        }
+
+                                        if (quickReplyIndex < replies.length) {
+                                            quickReplyIndex++;
+                                        }
+
+                                        repliesList
+                                            .clearQueue()
+                                            .stop()
+                                            .animate({
+                                                scrollLeft: "+=" + scrollValue
+                                            }, "fast", function () {
+
+                                                if (repliesList.scrollLeft() + repliesList.width() - 25 >=
+                                                    (repliesList.get(0).scrollWidth - leftArrow.width())) {
+
+                                                    $('#rightArrow').hide();
+                                                }
+
+                                                leftArrow.css('display', 'flex');
+                                            });
+                                    }
+                                )
+                        )
+                        .append(
+                            $('<ul>')
+                                .attr('id', 'scroll')
+                        )
+                        .insertAfter(msgWrapper.parent());
+
+
+                    val.message.quick_replies.forEach(function (item, index) {
+                        $('<li>')
+                            .text(item.title)
+                            .attr('id', 'reply' + index)
+                            .attr('payload', item.payload)
+                            .click(function () {
+                                send("btn", $(this), item.title);
+                                $(this).closest('.scrolling-container.quick').remove();
+                            })
+                            .appendTo(scrCont.find('ul'));
+                    });
+                    setTimeout(function () {
+                        $('.quick').find('ul').find('li').each(function (index, item) {
+                            scrContWidth += parseInt($(this).css('width'), 10);
+                        });
+
+                        if (scrContWidth > parseInt($("#scroll").css('width'), 10)) {
+                            scrCont.addClass('scrollable');
+                        }
+
+                        if ($('.quick').width() > scrContWidth) {
+                            $('#leftArrow').hide();
+                            $('#rightArrow').hide();
+                        } else {
+                            $('#leftArrow').css('display', 'flex');
+                            $('#rightArrow').css('display', 'flex');
+                        }
+
+                        if ($('.quick').find('ul').scrollLeft() === 0) {
+                            $('#leftArrow').hide();
+                        }
+                    })
+                }
+
+                var genericScrollingIndex = 0;
+
+                if (val.message.attachment && val.message.attachment.payload.elements) {
+                    var templateType = val.message.attachment.payload.template_type;
+                    scrCont = $('<div>')
+                        .addClass('scrolling-container');
+                    if (templateType === "generic"&& val.message.attachment.payload.elements.length>1) {
+                        scrCont.append(
+                            $('<span class="bc__widget--arrow">')
+                                .css('display', 'none')
+                                .append(
+                                    $('<img alt="chevron">')
+                                        .addClass('bc__widget--icon')
+                                        .attr('src', chevronIconUrl)
+                                        .css('transform', 'scaleX(-1)')
+                                )
+                                .click(
+                                    function () {
+                                        var navwidth = parseInt(scrCont.find('ul').css('width'), 10);
+                                        var rightArrow = scrCont.find('.bc__widget--arrow')[1];
+
+                                        genericScrollingIndex--;
+
+                                        if (genericScrollingIndex < val.message.attachment.payload.elements.length && rightArrow.style.display === 'none') {
+                                            rightArrow.style.display = 'flex';
+                                        }
+
+                                        if (genericScrollingIndex <= 0) {
+                                            $(this).css('display', 'none');
+                                        }
+
+                                        scrCont.find('ul')
+                                            .animate({
+                                                scrollLeft: "-=" + navwidth
+                                            }, "fast");
+                                    }
+                                )
+                        )
+                            .append(
+                                $('<span class="bc__widget--arrow">')
+                                    .css('display', 'flex')
+                                    .append(
+                                        $('<img alt="chevron">').addClass('bc__widget--icon')
+                                            .attr('src', chevronIconUrl)
+                                    )
+                                    .click(
+                                        function () {
+                                            var navwidth = parseInt(scrCont.find('ul').css('width'), 10);
+                                            var leftArrow = scrCont.find('.bc__widget--arrow')[0];
+
+                                            genericScrollingIndex++;
+                                            if (genericScrollingIndex > 0 && leftArrow.style.display === 'none') {
+                                                leftArrow.style.display = 'flex';
+                                            }
+
+                                            if (genericScrollingIndex === val.message.attachment.payload.elements.length - 1) {
+                                                $(this).css('display', 'none');
+                                            }
+
+                                            scrCont.find('ul')
+                                                .animate({
+                                                    scrollLeft: "+=" + navwidth
+                                                }, "fast");
+                                        }
+                                    )
+                            )
+                    }
+                    scrCont.append(
+                        $('<ul>')
+                    );
+
+                    var rightArrow = scrCont.find('.bc__widget--arrow')[1];
+
+
+                    if (templateType === "list") {
+                        scrCont.addClass('list');
+                    }
+
+                    $('<div>')
+                        .append(scrCont)
+                        .appendTo(msgWrapper);
+
+
+
+                    val.message.attachment.payload.elements.forEach(function (item) {
+                        var generic = $('<li>').addClass('generic');
+
+                        if (item.image_url) {
+                            generic.append(
+                                $('<div>')
+                                    .addClass('generic-img')
+                                    .append(
+                                        $('<div>')
+                                            .addClass('inner')
+                                            .css('background-image', 'url("' + item.image_url + '")')
+                                    )
+                            )
+                        }
+
+                        if (item.title || item.subtitle) {
+                            var info = $('<div>')
+                                .addClass('generic-info')
+                                .appendTo(generic);
+
+                            if (templateType === "list" && item.image_url) {
+                                info.css('width', 'calc(100% - 64px - 20px)');
+                            }
+                        }
+
+                        if (item.title) {
+                            $('<p>')
+                                .addClass('title')
+                                .text(item.title)
+                                .appendTo(info)
+                        }
+                        if (item.subtitle) {
+                            $('<p>')
+                                .addClass('subtitle')
+                                .text(item.subtitle)
+                                .appendTo(info)
+                        }
+
+                        if (item.buttons) {
+
+                            item.buttons.forEach(function (entry) {
+                                var btn = $('<a>')
+                                    .addClass('generic-btn')
+                                    .text(entry.title);
+
+                                if (entry.type === "postback") {
+                                    btn
+                                        .attr('payload', entry.payload)
+                                        .click(function () {
+                                            send("btn", $(this), entry.title);
+                                        });
+                                } else if (entry.type === "web_url") {
+                                    btn
+                                        .click(function () {
+                                            openUrlWindow(entry.url, entry.messenger_extensions)
+                                        })
+                                }
+
+                                if (val.message.attachment.payload.template_type === "list") {
+                                    btn.appendTo(generic.find('.generic-info'));
+                                } else {
+                                    btn.appendTo(generic);
+                                }
+
+                            })
+
+                        }
+
+                        generic.appendTo(scrCont.find('ul'));
+                    });
+
+                    setGenericWidth(scrCont);
+                }
+
+                if (val.message.attachment && val.message.attachment.payload.buttons && val.message.attachment.type!=="template") {
+
+                    message.css('border-radius', '8px 14px 0 0');
+                    btnWidth = message.outerWidth() + 1;
+
+                    val.message.attachment.payload.buttons.forEach(function (entry) {
+
+                        var btn = $('<a class="chat-message button">').text(entry.title);
+
+                        if (btnWidth !== 0) {
+                            // btn.css('width', btnWidth);
+                        } else if ($('.scrolling-container.list') && !btnWidth) {
+                            btnWidth = parseInt($('.scrolling-container.list').css('width'), 10);
+                            btn
+                                .css('max-width', '100%')
+                                .css('margin', '0 5px')
+                                .css('width', btnWidth - 10)
+                                .css('top', '-4px');
+                        } else {
+                            btn.css('display', 'inline-block');
+                        }
+
+                        if (entry.type === "postback") {
+                            btn
+                                .attr('payload', entry.payload)
+                                .click(function () {
+                                    send("btn", $(this), entry.title);
+                                });
+                        } else if (entry.type === "web_url") {
+                            btn
+                                .click(function () {
+                                    openUrlWindow(entry.url, entry.messenger_extensions)
+                                })
+                        }
+
+                        btn.appendTo(msgWrapper.find('.message-row:last'));
+
+                        msgWrapper.find('.message-row:last').find('.chat-message.bot').each(function (index, item) {
+                            item.style.width = '100%';
+                            item.style.maxWidth = 'unset';
+                        })
+                    });
+                }
+                if (val.message.attachment && val.message.attachment.type === "image" && val.message.attachment.payload.url) {
+                    //image scrolling down
+                    var img = document.createElement('img');
+                    img.classList.add('image_simple');
+
+                    var imgUrl = val.message.attachment.payload.url + '?q=' + Math.random();
+                    var loaded = false;
+                    var wait;
+
+                    img.addEventListener('load', function () {
+                        loaded = true;
+                    }, true);
+
+                    wait = setInterval(function () {
+                        if (loaded) {
+                            clearInterval(wait);
+                            img.style.height = img.height;
+                            chatScrollBottom();
+
+                        }
+                    }, 300);
+
+                    img.setAttribute('src', imgUrl);
+
+                    $('<div class="message-row">')
+                        .append(img)
+                        .appendTo(msgWrapper);
+                }
+                if (val.message.attachment && val.message.attachment.payload.buttons) {
+
+                    message.css('border-radius', '8px 14px 0 0');
+                    btnWidth = message.outerWidth() + 1;
+
+                    val.message.attachment.payload.buttons.forEach(function (entry) {
+
+                        var btn = $('<a class="chat-message button">').text(entry.title);
+
+                        if (btnWidth !== 0) {
+                            // btn.css('width', btnWidth);
+                        } else if ($('.scrolling-container.list') && !btnWidth) {
+                            btnWidth = parseInt($('.scrolling-container.list').css('width'), 10);
+                            btn
+                                .css('max-width', '100%')
+                                .css('margin', '0 5px')
+                                .css('width', btnWidth - 10)
+                                .css('top', '-4px');
+                        } else {
+                            btn.css('display', 'inline-block');
+                        }
+
+                        if (entry.type === "postback") {
+                            btn
+                                .attr('payload', entry.payload)
+                                .click(function () {
+                                    send("btn", $(this), entry.title);
+                                });
+                        } else if (entry.type === "web_url") {
+                            btn
+                                .click(function () {
+                                    openUrlWindow(entry.url, entry.messenger_extensions)
+                                })
+                        }
+
+                        btn.appendTo(msgWrapper);
+
+                        msgWrapper.find('.message-row:last').find('.chat-message.bot').each(function (index, item) {
+                            item.style.width = '100%';
+                            item.style.maxWidth = 'unset';
+                        })
+                    });
+                }
+
+                if(inputDisabled == false){
+                    $(".chat-bottom").css({'display': '', 'width' : chatWidth, 'height' : chatBottom});
+                } else {
+                    $(".chat-bottom").css({'display': 'none'});
+                }
+
+            }
+
+            container.appendTo($('#bc__chat-window').find('.message-container'));
+            chatScrollBottom();
+        }
+
+        var stompClient = null;
+        var socket = null;
+        var recInterval = null;
+
+        function connect() {
+            socket = new SockJS(socketUrl);
+
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe(stompClientSubscribeUrl + chatId, function (greeting) {
+                    var receivedMessage = sendEchoMessage(greeting);
+                    showGreeting(receivedMessage);
+                });
+
+                connected = true;
+                clearInterval(recInterval);
+
+                socket.onclose = function () {
+                    connected = false;
+                    clearInterval(socketsConnectionInterval);
+                    socket = null;
+                    recInterval = setInterval(function () {
+                        connect();
+                    }, 2000);
+                };
+            });
+        }
+
+        function sendEchoMessage(greeting) {
+            var receivedMessage = JSON.parse(greeting.body);
+
+            if (!receivedMessage.message) return receivedMessage;
+
+            var objCopy = JSON.parse(JSON.stringify(receivedMessage));
+            var attachment = receivedMessage.message.attachment;
+            if (attachment) {
+                if (attachment.payload.template_type == "button") {
+                    objCopy.message.text = attachment.payload.text;
+                }
+                objCopy.message.attachments = [];
+                objCopy.message.attachments.push(receivedMessage.message.attachment);
+            }
+
+            objCopy.message.isEcho = true;
+            delete objCopy.message.attachment;
+
+            var data = {
+                object: "page",
+                entry: [
+                    {
+                        id: botId,
+                        time: Date.now(),
+                        messaging: [
+                            {
+                                sender: {
+                                    id: botId
+                                },
+                                recipient: {
+                                    id: chatId
+                                },
+                                message: objCopy.message,
+                                timestamp: Date.now()
+                            }
+
+                        ]
+                    }
+                ]
+            };
+
+            stompClient.send(stompClientSendUrl, {}, JSON.stringify(data));
+            return receivedMessage;
+        }
+
+        function convertToMessagingType(message, isEcho) {
+            var data = null;
+            let quick_replies = [];
+
+            if(message.message.quickReplies !== undefined) {
+                if(message.message.quickReplies.length == 1) {
+                    quick_replies.push(JSON.parse(JSON.stringify(message.message.quickReplies).substring(1, JSON.stringify(message.message.quickReplies).length - 1)));
+                }
+                if(message.message.quickReplies.length > 1) {
+                    for(let key in message.message.quickReplies){
+                        if(typeof message.message.quickReplies[key] == "object"){
+                            quick_replies.push(message.message.quickReplies[key])
+                        }
+                    }
+                }
+            }
+
+            if(message.message.attachments !== undefined){
+
+                let at = JSON.parse(JSON.stringify(message.message.attachments).substring(1, JSON.stringify(message.message.attachments).length - 1));
+                if(at.payload.elements !== undefined) {
+                    for(let key in at.payload.elements) {
+                        at.payload.elements[key].image_url = at.payload.elements[key].imageUrl;
+                        at.payload.elements[key]
+                        delete at.payload.elements[key].imageUrl;
+                        if(at.payload.elements[key].buttons !== undefined){
+                            for(let buttonKey in at.payload.elements[key].buttons) {
+                                at.payload.elements[key].buttons[buttonKey].messenger_extensions = at.payload.elements[key].buttons[buttonKey].messengerExtensions
+                                at.payload.elements[key].buttons[buttonKey].messenger_extensions
+                                delete at.payload.elements[key].buttons[buttonKey].messengerExtensions
+                            }
+                        }
+                    }
+                }
+
+                if(at.payload.buttons !== undefined) {
+                    for(let key in at.payload.buttons) {
+                        at.payload.buttons[key].messenger_extensions = at.payload.buttons[key].messengerExtensions;
+                        at.payload.buttons[key]
+                        delete at.payload.buttons[key].messengerExtensions;
+                    }
+                }
+                data = {
+                    isEcho: isEcho,
+                    message : {
+                        attachment: {
+                            payload : {
+                                elements: at.payload.elements,
+                                buttons: at.payload.buttons,
+                                text: message.message.text,
+                                template_type: at.payload.templateType,
+                                url: at.payload.url
+                            },
+
+                            type: at.type
+                        },
+
+                        quick_replies: quick_replies,
+
+                        messaging_type : "RESPONSE",
+
+                        recipient : {
+                            id: 1
+                        }
+
+                    }
+                }
+            } else {
+                data = {
+                    isEcho: isEcho,
+                    message : {
+                        attachment: {
+                            payload : {
+                                text: message.message.text,
+                            },
+                            type: "template"
+                        },
+                        messaging_type : "RESPONSE",
+
+                        quick_replies: quick_replies,
+
+                        recipient : {
+                            id: 1
+                        }
+
+                    }
+                }
+            }
+            return data;
+        }
+
+        function disconnect() {
+            if (stompClient != null) {
+                stompClient.disconnect();
+            }
+        }
+
+        function sendName(message, param, title) {
+            var data = {
+                object: "page",
+                entry: [
+                    {
+                        id: botId,
+                        time: Date.now(),
+                        messaging: [
+                            {
+                                sender: {
+                                    id: chatId
+                                },
+                                recipient: {
+                                    id: botId
+                                },
+                                message: null,
+                                timestamp: Date.now()
+                            }
+
+                        ]
+                    }
+                ]
+            };
+
+            if (param === "btn") {
+                data.entry[0].messaging[0].postback = {
+                    payload: message,
+                    title: title
+                }
+            } else {
+                data.entry[0].messaging[0].message = {
+                    text: message
+                }
+            }
+
+            if (connected) {
+                stompClient.send(stompClientSendUrl, {}, JSON.stringify(data));
+            } else{
+                var i = setInterval(function(){
+                    if (connected) {
+                        stompClient.send(stompClientSendUrl, {}, JSON.stringify(data));
+                        clearInterval(i);
+                    }
+                }, 200);
+            }
+        }
+
+        function showGreeting(message) {
+            if(message.textDisabled !== undefined){
+                inputDisabled = message.textDisabled
+            }
+            setResponse({ sender_action: 'typing_off' });
+            setResponse(message, setGenericWidth);
+
+            if ((message.message !== null) && (message.message !== undefined)) {
+                if (message.message.text !== undefined) {
+                    let parsedText = getLinkifyParsedText(message.message.text);
+                    if(parsedText != null && parsedText.messengerExtensions == true){
+                        $(".inserted_link").click(function() {
+                            event.preventDefault();
+                            var href = $(this).attr('href');
+                            openUrlWindow(href, parsedText.messengerExtensions)
+                        })
+                    }
+                }
+            }
+        }
+
+
+        function send(param, elem, title) {
+            if(text !== ""){
+                $('.scrolling-container.quick').remove();
+            }
+            $('.scrolling-container.quick').remove();
+            $(".persistent-menu").hide();
+
+            var input = $("#bc__widget__chat-input");
+            var text = input.val();
+            container = null;
+
+            if (param === "btn") {
+                text = title;
+            }
+
+            if (param === "menu") {
+                text = elem;
+            }
+
+            if (text.length && text.trim()) {
+                input.val('');
+
+                if (param === "btn") {
+                    sendName(elem.attr('payload'), "btn", title);
+                } else {
+                    sendName(text);
+                }
+
+                $('<div class="message-outer user">')
+                    .append(
+                        $('<div class="chat-message user">').text(text).css('background-color', color)
+                    )
+                    .appendTo($('#bc__chat-window').find('.message-container'));
+
+            } else {
+                input.val('').focus();
+            }
+            chatScrollBottom();
+        }
+
+        function showChatHistoryUserMessage(param, elem, title) {
+            $('.scrolling-container.quick').remove();
+            $(".persistent-menu").hide();
+
+            var input = $("#bc__widget__chat-input");
+            var text = input.val();
+            container = null;
+
+            if (param === "btn") {
+                text = title;
+            }
+
+            if (param === "menu") {
+                text = elem;
+            }
+
+            if (text.length && text.trim()) {
+                input.val('');
+
+                $('<div class="message-outer user">')
+                    .append(
+                        $('<div class="chat-message user">').text(text).css('background-color', color)
+                    )
+                    .appendTo($('#bc__chat-window').find('.message-container'));
+
+            } else {
+                input.val('').focus();
+            }
+            chatScrollBottom();
+        }
+
+
+        function backToBot() {
+            $('#webview').fadeOut('fast');
+        }
+
+        function openUrlWindow(url, webview) {
+            var openUrl = url;
+
+            if (!/^https?:\/\//i.test(url)) {
+                openUrl = 'http://' + url;
+            }
+
+            if (webview) {
+                $('#webview').fadeIn('fast');
+                $('#webviewFrame').attr('src', openUrl);
+            } else {
+                window.open(openUrl);
+            }
+        }
+
+        function chatScrollBottom() {
+            var messageContainer = $("#messageContainer");
+            messageContainer.animate({ scrollTop: messageContainer.prop("scrollHeight") }, 0);
+        }
+
+        var resizeTimer;
+
+        function setGenericWidth(scrCont) {
+
+            clearTimeout(resizeTimer);
+
+            resizeTimer = setTimeout(function () {
+                if (scrCont === undefined) {
+                    scrCont = $(".scrolling-container:not(.quick)").last();
+                }
+
+                scrCont.find('.generic-info').each(function () {
+                    var genImg = $(this).parent().find('.generic-img');
+
+                    if (genImg) {
+                        var genImgWidth = parseInt($(this).parent().find('.generic-img').find('.inner').css('width'), 10);
+                        genImg.find('.inner').css('height', genImgWidth / 2);
+                    }
+                });
+
+                var scrContWidth = 0;
+
+                scrCont.find('.generic').each(function () {
+                    scrContWidth += parseInt($(this).css('width'), 10);
+                });
+
+                if (scrContWidth > parseInt($(scrCont[0]).css('width'), 10)) {
+                    $(scrCont[0]).addClass('scrollable');
+
+                    scrContWidth = parseInt($('#messageContainer .message-outer.bot').css('width'), 10) - 44 - 40;
+
+                    $(scrCont[0]).find('.generic-info').each(function () {
+                        // $(this).css('width', scrContWidth);
+                        var genImg = $(this).parent().find('.generic-img');
+
+                        if (genImg) {
+                            var genImgWidth = parseInt($(this).parent().find('.generic-img').find('.inner').css('width'), 10);
+                            genImg.find('.inner').css('height', genImgWidth / 2);
+                        }
+                    });
+                }
+
+                chatScrollBottom();
+            }, 10);
+        }
+
+        $(window).resize(function () {
+            var repliesList = $('#scroll');
+            if ($('.scrolling-container').width() > repliesList.width()) {
+                $('#leftArrow').hide();
+                $('#rightArrow').hide();
+            } else {
+                $('#leftArrow').css('display', 'flex');
+                $('#rightArrow').css('display', 'flex');
+            }
+            if (repliesList.scrollLeft() === 0) {
+                $('#leftArrow').hide();
+            }
+        });
+
+        window.initializeShopchat = init;
+        return true;
+    }
+})();
