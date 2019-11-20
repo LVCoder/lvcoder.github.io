@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BotsCrew demo</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <img src="quest.png" alt="" style = "width:100%; height:120vh">
+    <<script src=https://app.botscrew.com/api/file/js/widget-63f094ab77930feb4cf0c78c585ffe31.js></script>
+</body>
+</html>
